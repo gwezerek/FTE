@@ -75,6 +75,13 @@ gulp.task('fonts', () => {
     .pipe($.size({title: 'fonts'}));
 });
 
+// Copy data
+gulp.task('data', () => {
+  return gulp.src(['app/data/**'])
+    .pipe(gulp.dest('dist/data'))
+    .pipe($.size({title: 'data'}));
+});
+
 // Compile and automatically prefix stylesheets
 gulp.task('styles', () => {
   const AUTOPREFIXER_BROWSERS = [
@@ -110,7 +117,7 @@ gulp.task('styles', () => {
 
 // Concatenate and minify JavaScript
 gulp.task('scripts', () => {
-  return gulp.src(['./app/scripts/main.js'])
+  return gulp.src(['./app/scripts/vendor/*.js', './app/scripts/main.js'])
     .pipe($.concat('main.min.js'))
     .pipe($.uglify({preserveComments: 'some'}))
     // Output files
@@ -169,7 +176,7 @@ gulp.task('serve', ['styles'], () => {
 
   gulp.watch(['app/**/*.html'], reload);
   gulp.watch(['app/styles/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['app/scripts/**/*.js'], ['jshint']);
+  gulp.watch(['app/scripts/**/*.js'], reload);
   gulp.watch(['app/images/**/*'], reload);
 });
 
@@ -191,7 +198,7 @@ gulp.task('serve:dist', ['default'], () => {
 gulp.task('default', ['clean'], cb => {
   runSequence(
     'styles',
-    ['jshint', 'html', 'scripts', 'images', 'fonts', 'copy'],
+    ['html', 'scripts', 'images', 'fonts', 'data', 'copy'],
     'generate-service-worker',
     cb
   );
@@ -223,6 +230,7 @@ gulp.task('generate-service-worker', cb => {
       // Add/remove glob patterns to match your directory setup.
       `${rootDir}/fonts/**/*.woff`,
       `${rootDir}/images/**/*`,
+      `${rootDir}/data/**/*`,
       `${rootDir}/scripts/**/*.js`,
       `${rootDir}/styles/**/*.css`,
       `${rootDir}/*.{html,json}`
