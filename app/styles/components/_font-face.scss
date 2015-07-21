@@ -1,0 +1,63 @@
+/**
+*
+* Font-face
+* Include any font-face declarations here. Note that fontawesome is declared in vendor/css.
+* Only use woff2 and woff, re: http://davidensinger.com/2014/10/update-your-font-face-file-formats-to-just-use-woff-and-woff2/
+**/
+
+/* ==========  Decima  ========== */
+
+@font-face {
+  font-family: 'Decima';
+  src: url('../fonts/Decima.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ==========  Decima Mono  ========== */
+
+@font-face {
+  font-family: 'Decima Mono';
+  src: url('../fonts/DecimaMonoPro-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Decima Mono';
+  src: url('../fonts/DecimaMonoPro.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* ==========  Atlas Grotesk  ========== */
+
+@font-face {
+  font-family: 'Atlas Grotesk';
+  src: url('../fonts/AtlasGrotesk-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Atlas Grotesk';
+  src: url('../fonts/AtlasGrotesk-Regular.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* ==========  Arnhem Pro  ========== */
+
+@font-face {
+  font-family: 'Arnhem';
+  src: url('../fonts/ArnhemPro-Black.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Arnhem';
+  src: url('../fonts/ArnhemPro-Normal.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}

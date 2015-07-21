@@ -5,12 +5,18 @@
 **/
 
 .graphic__mod {
-  max-width: 40rem;
+  max-width: 60rem;
   margin: 40px auto;
 }
 
 .graphic__head {
-  color: red;
+	font-size: $fontBase;
+	margin-bottom: $baseSpace/2;
+	color: $colorBlack;
+}
+
+.graphic__intro {
+	font-size: $fontSmall;
 }
 
 .graphic__wrap {
