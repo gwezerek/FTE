@@ -4,27 +4,33 @@
   var querySelector = document.querySelector.bind(document);
 
   var margin = {top: 10, right: 10, bottom: 10, left: 10},
-  width = 490 - margin.left - margin.right,
+  width = 440 - margin.left - margin.right,
   height = 320 - margin.top - margin.bottom;
 
-  var svg = d3.select('.graphic__wrap--scatter')
-    .append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom);
+  var svg = d3.select( '.graphic__wrap--scatter' )
+    .append( 'svg' )
+    .attr( 'width', width + margin.left + margin.right)
+    .attr( 'height', height + margin.top + margin.bottom);
 
-  var g = svg.append('g')
-    .attr( 'transform', 'translate(' + margin.left + ',' + margin.top + ')' );
+  var g = svg.append( 'g' )
+    .attr( 'transform', 'translate( ' + margin.left + ',' + margin.top + ' )' );
 
   var xScale = d3.scale.linear()
-    .range( [ 0, width ] );
+    .range( [ width, 0 ] );
 
   var yScale = d3.scale.linear()
-    .range( [ 0, height ] );
+    .range( [ height, 0 ] );
 
-  var rScale = d3.scale.linear()
+  var rScale = d3.scale.sqrt()
     .range( [ 0, 5 ] );
 
-  d3.json('data/2009_2010_nba.json', function(data) {
+  var hexbin = d3.hexbin()
+    .x( function( d ) { return xScale( d.x_coord ); } )
+    .y( function( d ) { return yScale( d.y_coord ); } )
+    .size( [ width, height ] )
+    .radius( 6 );
+
+  d3.json( 'data/2009_2010_nba.json', function(data) {
     let playerShots = mungePlayerShots( data );
     let leagueAverages = mungeLeagueAverages( data );
 
@@ -33,30 +39,34 @@
     }));
 
     console.log( d3.extent( playerShots, function( d ) {
-      return d.x_coord;
+      return d.y_coord;
     }) );
 
-    yScale.domain( d3.extent( playerShots, function( d ) {
-      return d.y_coord;
-    }));
+    // yScale.domain( d3.extent( playerShots, function( d ) {
+    //   return d.y_coord;
+    // }));
 
-    rScale.domain( d3.extent( playerShots, function( d ) {
-      return d.made;
-    }));
+    yScale.domain([ -17, 345 ]);
 
-    g.selectAll( 'circle' )
-      .data( playerShots )
-    .enter().append( 'circle' )
-      .attr( 'cx', function( d ) {
-        return xScale( d.x_coord );
-      })
-      .attr('cy', function( d ) {
-        return yScale( d.y_coord );
-      })
-      .attr('r', function( d ) {
-        return 5;
-        // return rScale( d.made );
-      });
+    // rScale.domain( d3.extent( playerShots, function( d ) {
+    //   return d.made;
+    // }));
+
+    rScale.domain( [ 0, 3 ] );
+
+
+    g.selectAll( '.hexagon' )
+        .data( hexbin( playerShots ) )
+      .enter().append( 'path' )
+        .attr( 'class', 'hexagon' )
+        .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
+        .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
+
+    g.append('path')
+      .attr('d', hexbin.mesh())
+      .style('stroke-width', .5)
+      // .style('stroke', 'black')
+      .style('fill', 'none');
 
   });
 
@@ -69,12 +79,13 @@
     });
 
     let nestedData = d3.nest()
-      .key(function(d) { return d.LOC_X; })
-      .key(function(d) { return d.LOC_Y; })
+      .key(function( d ) { return d.LOC_X; })
+      .key(function( d ) { return d.LOC_Y; })
       .rollup(function( coord ) {
         return {
+          'zone': coord[0].SHOT_ZONE_BASIC,
           'attempted': coord.length,
-          'made': d3.sum( coord, function(d) {
+          'made': d3.sum( coord, function( d ) {
             return d.SHOT_MADE_FLAG;
           })
         };
@@ -88,7 +99,8 @@
           'x_coord': parseInt( xCoord.key ),
           'y_coord': parseInt( yCoord.key ),
           'attempted': loc.attempted,
-          'made': loc.made
+          'made': loc.made,
+          'zone': loc.zone
         });
       });
     });
