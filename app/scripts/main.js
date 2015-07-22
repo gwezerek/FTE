@@ -16,13 +16,21 @@
     .attr( 'transform', 'translate( ' + margin.left + ',' + margin.top + ' )' );
 
   var xScale = d3.scale.linear()
+    .domain( [ -250, 250 ] )
     .range( [ width, 0 ] );
 
   var yScale = d3.scale.linear()
+    .domain([ -20, 345 ])
     .range( [ height, 0 ] );
 
   var rScale = d3.scale.sqrt()
-    .range( [ 0, 5 ] );
+    // .clamp( true )
+    .domain( [ 0, 3 ] )
+    .range( [ 0, 6 ] );
+
+  var colorScale = d3.scale.quantize()
+      .domain( [ 1, 0.4 ] )
+      .range( [ '#0571b0', '#92c5de', '#f7f7f7', '#f4a582', '#ca0020' ] );
 
   var hexbin = d3.hexbin()
     .x( function( d ) { return xScale( d.x_coord ); } )
@@ -33,42 +41,26 @@
   d3.json( 'data/2009_2010_nba.json', function(data) {
     let playerShots = mungePlayerShots( data );
     let leagueAverages = mungeLeagueAverages( data );
-
-    xScale.domain( d3.extent( playerShots, function( d ) {
-      return d.x_coord;
-    }));
-
-    console.log( d3.extent( playerShots, function( d ) {
-      return d.y_coord;
-    }) );
-
-    // yScale.domain( d3.extent( playerShots, function( d ) {
-    //   return d.y_coord;
-    // }));
-
-    yScale.domain([ -17, 345 ]);
-
-    // rScale.domain( d3.extent( playerShots, function( d ) {
-    //   return d.made;
-    // }));
-
-    rScale.domain( [ 0, 3 ] );
-
+    playerShots = mergeEfficiency( playerShots, leagueAverages );
 
     g.selectAll( '.hexagon' )
         .data( hexbin( playerShots ) )
       .enter().append( 'path' )
         .attr( 'class', 'hexagon' )
         .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
+        .attr( 'fill', function( d ) { return colorScale( d[0].fg_pct ); } )
         .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
-
-    g.append('path')
-      .attr('d', hexbin.mesh())
-      .style('stroke-width', .5)
-      // .style('stroke', 'black')
-      .style('fill', 'none');
-
   });
+
+  function mergeEfficiency( playerShots, leagueAverages ) {
+    // debugger;
+    _.each( playerShots, function( shot, i) {
+      // Refactor
+      playerShots[i].fg_pct = _.findWhere( leagueAverages, { SHOT_ZONE_AREA: shot.zone } ).FG_PCT;
+    })
+
+    return playerShots;
+  }
 
   function mungePlayerShots( data ) {
     let playerShots = [];
@@ -83,7 +75,7 @@
       .key(function( d ) { return d.LOC_Y; })
       .rollup(function( coord ) {
         return {
-          'zone': coord[0].SHOT_ZONE_BASIC,
+          'zone': coord[0].SHOT_ZONE_AREA,
           'attempted': coord.length,
           'made': d3.sum( coord, function( d ) {
             return d.SHOT_MADE_FLAG;
