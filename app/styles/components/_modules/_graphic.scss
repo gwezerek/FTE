@@ -6,11 +6,12 @@
 
 .article {
   max-width: 100rem;
+  min-width: 56rem;
   margin: $baseSpace auto;
 }
 
 .article__header {
-	margin-bottom: $baseSpace;
+	margin-bottom: $baseSpace*1.5;
 }
 
 .article__head {
@@ -62,6 +63,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
+	margin-bottom: $baseSpace*1.5;
 }
 
 .graphic__wrap {

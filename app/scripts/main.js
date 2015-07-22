@@ -24,9 +24,13 @@
     .domain( [ 0, 6 ] )
     .range( [ 0, 6 ] );
 
-  let colorScale = d3.scale.quantize()
+  let colorScaleSeq = d3.scale.quantize()
     .domain( [ 0, 10 ] )
     .range( ['rgb(255,255,204)','rgb(255,237,160)','rgb(254,217,118)','rgb(254,178,76)','rgb(253,141,60)','rgb(252,78,42)','rgb(227,26,28)','rgb(189,0,38)','rgb(128,0,38)'] );
+
+  let colorScaleDiv = d3.scale.quantize()
+    .domain( [ -.1, .1 ] )
+    .range( ['rgb(215,25,28)','rgb(253,174,97)','rgb(255,255,191)','rgb(171,217,233)','rgb(44,123,182)'] );
 
   let hexbin = d3.hexbin()
     .x( function( d ) { return xScale( d.LOC_X ); } )
@@ -72,8 +76,25 @@
         .enter().append( 'path' )
           .attr( 'class', 'hexagon' )
           .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
-          .attr( 'fill', function( d ) { return colorScale( d.length ); } )
+          .attr( 'fill', function( d ) { return colorScaleSeq( d.length ); } )
           .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
+
+      let svgE = d3.select( '#js--viz__wrap--efficiency--' + season )
+        .append( 'svg' )
+        .attr( 'width', width + margin.left + margin.right)
+        .attr( 'height', height + margin.top + margin.bottom);
+
+      let gE = svgE.append( 'g' )
+        .attr( 'transform', 'translate( ' + margin.left + ',' + margin.top + ' )' );
+
+      gE.selectAll( '.hexagon' )
+          .data( hexbin( mungedData[ season ] ) )
+        .enter().append( 'path' )
+          .attr( 'class', 'hexagon' )
+          .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
+          .attr( 'fill', function( d ) { return colorScaleDiv( d.length ); } )
+          .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
+
     });
 
   }
