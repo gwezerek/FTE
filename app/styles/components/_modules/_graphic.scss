@@ -4,22 +4,80 @@
 *
 **/
 
-.graphic__mod {
-  max-width: 60rem;
-  margin: 40px auto;
+.article {
+  max-width: 100rem;
+  margin: $baseSpace auto;
 }
 
-.graphic__head {
-	font-size: $fontBase;
+.article__header {
+	margin-bottom: $baseSpace;
+}
+
+.article__head {
+	font-size: $fontLarge;
 	margin-bottom: $baseSpace/2;
 	color: $colorBlack;
 }
 
-.graphic__intro {
+.article__intro {
 	font-size: $fontSmall;
+	width: 70%;
+	max-width: 65rem;
+	font-family: $grantSerif;
+}
+
+
+.graphic__header {
+	position: relative;
+	width: 100%;
+	border-bottom: 1px solid $colorGray;
+}
+
+.graphic__head {
+	width: 70%;
+	font-size: $fontBase;
+	font-weight: 500;
+	margin-bottom: $baseSpace/2;
+	color: $colorBlack;
+}
+
+.graphic__head__img__wrap {
+	position: absolute;
+	right: 0;
+	width: 25%;
+}
+
+.graphic__head__img {
+	position: absolute;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	width: 75%;
+	min-width: 15rem;
+	max-width: 25rem;
+	padding-right: $baseSpace;
+}
+
+.graphic__mod {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .graphic__wrap {
+	&:first-of-type {
+		margin-right: $baseSpace;
+	}
+}
+
+.viz__wrap {
 	background: url(/images/court-lines.gif) no-repeat 10px 10px;
 	display: inline-block;
+	min-height: 31rem;
+}
+
+.viz__caption--heatmap {
+	font-size: $fontSmall;
+	font-family: $grantSerifDisplay;
+	text-align: center;
 }

@@ -1,54 +1,50 @@
 (function () {
   'use strict';
 
-  var querySelector = document.querySelector.bind(document);
+  // State lets, icky, but will do for now
+  let mungedData = {
+    '2009': [],
+    '2010': []
+  }
 
-  var margin = { top: 10, right: 10, bottom: 55, left: 10 },
+  let margin = { top: 10, right: 10, bottom: 55, left: 10 },
   width = 466 - margin.left - margin.right,
   height = 310 - margin.top - margin.bottom;
 
-  var svg = d3.select( '.graphic__wrap--scatter' )
-    .append( 'svg' )
-    .attr( 'width', width + margin.left + margin.right)
-    .attr( 'height', height + margin.top + margin.bottom);
-
-  var g = svg.append( 'g' )
-    .attr( 'transform', 'translate( ' + margin.left + ',' + margin.top + ' )' );
-
-  var xScale = d3.scale.linear()
+  let xScale = d3.scale.linear()
     .domain( [ -260, 260 ] )
     .range( [ width, 0 ] );
 
-  var yScale = d3.scale.linear()
+  let yScale = d3.scale.linear()
     .domain([ 0, 295 ])
     .range( [ height, 0 ] );
 
-  var rScale = d3.scale.sqrt()
+  let rScale = d3.scale.sqrt()
     .clamp( true )
-    .domain( [ 0, 3 ] )
-    .range( [ 0, 5 ] );
+    .domain( [ 0, 6 ] )
+    .range( [ 0, 6 ] );
 
-  var colorScale = d3.scale.quantize()
-      .domain( [ 0, 10 ] )
-      .range( ['rgb(237,248,251)','rgb(179,205,227)','rgb(140,150,198)','rgb(136,86,167)','rgb(129,15,124)'] );
+  let colorScale = d3.scale.quantize()
+    .domain( [ 0, 10 ] )
+    .range( ['rgb(255,255,204)','rgb(255,237,160)','rgb(254,217,118)','rgb(254,178,76)','rgb(253,141,60)','rgb(252,78,42)','rgb(227,26,28)','rgb(189,0,38)','rgb(128,0,38)'] );
 
-  var hexbin = d3.hexbin()
+  let hexbin = d3.hexbin()
     .x( function( d ) { return xScale( d.LOC_X ); } )
     .y( function( d ) { return yScale( d.LOC_Y ); } )
     .size( [ width, height ] )
-    .radius( 5 );
+    .radius( 6 );
 
-  d3.json( 'data/2009_2010_nba.json', function(data) {
-    let playerShots = mungePlayerShots( data );
+  queue()
+    .defer(d3.json, 'data/2009_2010_nba.json' )
+    .defer(d3.json, 'data/2010_2011_nba.json' )
+    .await( initViz );
 
-    g.selectAll( '.hexagon' )
-        .data( hexbin( playerShots ) )
-      .enter().append( 'path' )
-        .attr( 'class', 'hexagon' )
-        .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
-        .attr( 'fill', function( d ) { return colorScale( d.length ); } )
-        .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
-  });
+  function initViz( err, data2009, data2010 ) {
+    mungedData['2009'] = mungePlayerShots( data2009 );
+    mungedData['2010'] = mungePlayerShots( data2010 );
+
+    drawViz();
+  }
 
   function mungePlayerShots( data ) {
     let playerShots = [];
@@ -59,6 +55,27 @@
     });
 
     return playerShots;
+  }
+
+  function drawViz() {
+    _.each( _.keys( mungedData ), function( season, i ) {
+      let svg = d3.select( '#js--viz__wrap--' + season )
+        .append( 'svg' )
+        .attr( 'width', width + margin.left + margin.right)
+        .attr( 'height', height + margin.top + margin.bottom);
+
+      let g = svg.append( 'g' )
+        .attr( 'transform', 'translate( ' + margin.left + ',' + margin.top + ' )' );
+
+      g.selectAll( '.hexagon' )
+          .data( hexbin( mungedData[ season ] ) )
+        .enter().append( 'path' )
+          .attr( 'class', 'hexagon' )
+          .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
+          .attr( 'fill', function( d ) { return colorScale( d.length ); } )
+          .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
+    });
+
   }
 
   function mungeLeagueAverages( data ) {

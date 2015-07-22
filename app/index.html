@@ -19,13 +19,29 @@
     <link rel="stylesheet" href="styles/main.css">
   </head>
   <body>
-    <div class="graphic__mod">
-      <h3 class="graphic__head">Can Derrick Rose Shoot?</h3>
-      <p class="graphic__intro">Derrick Rose was a midrange god in the 2009-2010 season, banking 47 percent of his 794 attempts inside the arc. He abandoned all that success a season later to focus on 3s, migrating outward and more than sextupling his 3-point-shooting volume. Based on Rose's performance in last week's FIBA World Nap Cup of Basketball, it might be time for a return to the field.</p>
-      <div id="graphic__wrap--2009" class="graphic__wrap graphic__wrap--scatter"></div>
-      <canvas id="canvas" width="800" height="350"></canvas>
+    <article class="article">
+      <header class="article__header">
+        <h3 class="article__head">Can Derrick Rose Shoot?</h3>
+        <p class="article__intro">Derrick Rose was a midrange god in the 2009-2010 season, banking 47 percent of his 794 attempts inside the arc. But he switched up his positioning a season later, migrating outward and more than sextupling his 3-point-shooting volume. Based on Rose's performance in last week's FIBA World Nap Cup of Basketball, it might be time to return to the midrange jump shots that made him famous.</p>
+      </header>
+      <div class="graphic__mod">
+        <header class="graphic__header">
+          <h4 class="graphic__head">The Great Outward Migration</h4>
+          <div class="graphic__head__img__wrap">
+            <img src="images/rose_sillo.png" alt="Derrick Rose at the FIBA World Nap Cup" class="graphic__head__img">
+          </div>
+        </header>
+        <figure class="graphic__wrap">
+          <div id="js--viz__wrap--2009" class="viz__wrap"></div>
+          <figcaption class="viz__caption--heatmap">2009&ndash;2010</figcaption>
+        </figure>
+        <figure class="graphic__wrap">
+          <div id="js--viz__wrap--2010" class="viz__wrap"></div>
+          <figcaption class="viz__caption--heatmap">2010&ndash;2011</figcaption>
+        </figure>
+      </div>
       <!-- <footer class="graphic__footer">bug, based on ESPN data</footer> -->
-    </div>
+    </article>
 
     <!-- build:js(app/) ../../scripts/main.min.js -->
     <script src="scripts/vendor/d3.js"></script>

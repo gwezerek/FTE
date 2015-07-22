@@ -5,6 +5,61 @@
 * Only use woff2 and woff, re: http://davidensinger.com/2014/10/update-your-font-face-file-formats-to-just-use-woff-and-woff2/
 **/
 
+/* ==========  Balto  ========== */
+
+@font-face {
+  font-family: 'Balto';
+  src: url('../fonts/baltoweb-book.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Balto';
+  src: url('../fonts/baltoweb-medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Balto';
+  src: url('../fonts/baltoweb-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* ==========  Harriet Display  ========== */
+
+@font-face {
+  font-family: 'Harriet Display';
+  src: url('../fonts/HText.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* ==========  Harriet  ========== */
+
+@font-face {
+  font-family: 'Harriet';
+  src: url('../fonts/HText-1.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Harriet';
+  src: url('../fonts/HText-2.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Harriet';
+  src: url('../fonts/HText-3.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
 /* ==========  Decima  ========== */
 
 @font-face {
