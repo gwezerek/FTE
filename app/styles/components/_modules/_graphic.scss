@@ -25,7 +25,11 @@
 
 .hexagon {
   // fill: steelblue;
-  stroke: $colorWhite;
+  // stroke: $colorGrayLighter;
   stroke-width: .5px;
+}
+
+.clip-svg {
+  clip-path: url('../#myClip');
 }
 

@@ -6,6 +6,7 @@
     <meta name="description" content="FTE Design Test">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>FTE Design Test</title>
+    <base href="/">
 
     <link rel="shortcut icon" type="image/x-icon" href="https://s0.wp.com/wp-content/themes/vip/espn-fivethirtyeight/assets/img/favicon.ico?v=1.0.2">
     <link rel="icon" type="image/x-icon" href="https://s0.wp.com/wp-content/themes/vip/espn-fivethirtyeight/assets/img/favicon.ico?v=1.0.2">
@@ -19,9 +20,11 @@
   </head>
   <body>
     <div class="graphic__mod">
+      <!-- <img class="clip-svg" src="http://vasir-assets.s3.amazonaws.com/fog-of-war/map.jpg" alt="Harry Potter"> -->
       <h3 class="graphic__head">Can Derrick Rose Shoot?</h3>
       <p class="graphic__intro">Derrick Rose was a midrange god in the 2009-2010 season, banking 47 percent of his 794 attempts inside the arc. He abandoned all that success a season later to focus on 3s, migrating outward and more than sextupling his 3-point-shooting volume. Based on Rose's performance in last week's FIBA World Nap Cup of Basketball, it might be time for a return to the field.</p>
-      <div class="graphic__wrap graphic__wrap--scatter"></div>
+      <div id="graphic__wrap--2009" class="graphic__wrap graphic__wrap--scatter"></div>
+      <canvas id="canvas" width="800" height="350"></canvas>
       <!-- <footer class="graphic__footer">bug, based on ESPN data</footer> -->
     </div>
 
@@ -29,6 +32,7 @@
     <script src="scripts/vendor/d3.js"></script>
     <script src="scripts/vendor/queue.js"></script>
     <script src="scripts/vendor/hexbin.js"></script>
+    <script src="scripts/vendor/simpleheat.js"></script>
     <script src="scripts/vendor/underscore.js"></script>
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
