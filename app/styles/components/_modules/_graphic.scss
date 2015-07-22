@@ -38,7 +38,7 @@
 	width: 70%;
 	font-size: $fontBase;
 	font-weight: 500;
-	margin-bottom: $baseSpace/2;
+	margin-bottom: $baseSpace/4;
 	color: $colorBlack;
 }
 
@@ -67,6 +67,7 @@
 }
 
 .graphic__wrap {
+	position: relative;
 	&:first-of-type {
 		margin-right: $baseSpace;
 	}
@@ -76,10 +77,25 @@
 	background: url(/images/court-lines.gif) no-repeat 10px 10px;
 	display: inline-block;
 	min-height: 31rem;
+	margin-bottom: 1rem;
 }
 
 .viz__caption--heatmap {
 	font-size: $fontSmall;
 	font-family: $grantSerifDisplay;
-	text-align: center;
+	padding-left: 2rem;
+}
+
+.viz__legend--efficiency {
+	width: 23rem;
+	position: absolute;
+  right: 2rem;
+  bottom: -9px;
+}
+
+
+
+.hexagon--efficiency {
+	stroke: $colorGrayLight;
+	stroke-width: 1px;
 }

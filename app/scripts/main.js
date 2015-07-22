@@ -1,10 +1,12 @@
-(function () {
+( function () {
   'use strict';
 
-  // State lets, icky, but will do for now
+  // State vars, icky, but will do for now
   let mungedData = {
     '2009': [],
-    '2010': []
+    '2010': [],
+    'leagueAverages2009': [],
+    'leagueAverages2010': []
   }
 
   let margin = { top: 10, right: 10, bottom: 55, left: 10 },
@@ -26,11 +28,18 @@
 
   let colorScaleSeq = d3.scale.quantize()
     .domain( [ 0, 10 ] )
-    .range( ['rgb(255,255,204)','rgb(255,237,160)','rgb(254,217,118)','rgb(254,178,76)','rgb(253,141,60)','rgb(252,78,42)','rgb(227,26,28)','rgb(189,0,38)','rgb(128,0,38)'] );
+    .range( ['rgb(255,247,251)','rgb(236,226,240)','rgb(208,209,230)','rgb(166,189,219)','rgb(103,169,207)','rgb(54,144,192)','rgb(2,129,138)','rgb(1,108,89)','rgb(1,70,54)'] );
 
   let colorScaleDiv = d3.scale.quantize()
-    .domain( [ -.1, .1 ] )
-    .range( ['rgb(215,25,28)','rgb(253,174,97)','rgb(255,255,191)','rgb(171,217,233)','rgb(44,123,182)'] );
+    .domain( [ -0.1, 0.1 ] )
+    .range( ['rgb( 253,174,97)','rgb(254,224,144)','rgb(255,255,191)','rgb(224,243,248)','rgb(171,217,233)'] );
+
+    var dom = colorScaleDiv.domain(),
+        l = (dom[1] - dom[0])/colorScaleDiv.range().length,
+        breaks = d3.range(0, colorScaleDiv.range().length).map(function(i) { return i * l; });
+
+    console.log( dom, l, breaks);
+    // debugger;
 
   let hexbin = d3.hexbin()
     .x( function( d ) { return xScale( d.LOC_X ); } )
@@ -44,18 +53,38 @@
     .await( initViz );
 
   function initViz( err, data2009, data2010 ) {
-    mungedData['2009'] = mungePlayerShots( data2009 );
-    mungedData['2010'] = mungePlayerShots( data2010 );
+    mungedData['leagueAverages2009'] = mungeLeagueAverages( data2009 );
+    mungedData['leagueAverages2010'] = mungeLeagueAverages( data2010 );
+    mungedData['2009'] = mungePlayerShots( data2009, '2009' );
+    mungedData['2010'] = mungePlayerShots( data2010, '2010' );
 
     drawViz();
   }
 
-  function mungePlayerShots( data ) {
+  function mungePlayerShots( data, year ) {
     let playerShots = [];
 
     // Merge header array with rows
     _.each( data.resultSets[0].rowSet, function( shot, i ) {
-      playerShots.push(_.object(data.resultSets[0].headers, shot));
+      playerShots.push( _.object( data.resultSets[ 0 ].headers, shot ) );
+      playerShots[ i ].avg_fg_pct = _.findWhere( mungedData['leagueAverages' + year ], {
+        'SHOT_ZONE_BASIC': playerShots[ i ].SHOT_ZONE_BASIC,
+        'SHOT_ZONE_AREA': playerShots[ i ].SHOT_ZONE_AREA
+      }).FG_PCT;
+    });
+
+    let playerFgPcts = d3.nest()
+      .key( function( d ) { return d.SHOT_ZONE_BASIC; })
+      .key( function( d ) { return d.SHOT_ZONE_AREA; })
+      .rollup( function( shots ) {
+        return { 'fg_pct': d3.sum( shots, function( d ) {
+          return d.SHOT_MADE_FLAG;
+        }) /  shots.length }
+      })
+      .map( playerShots );
+
+    _.each( playerShots, function( shot, i ) {
+      playerShots[i].fg_pct = playerFgPcts[ shot.SHOT_ZONE_BASIC ][ shot.SHOT_ZONE_AREA ].fg_pct;
     });
 
     return playerShots;
@@ -90,11 +119,10 @@
       gE.selectAll( '.hexagon' )
           .data( hexbin( mungedData[ season ] ) )
         .enter().append( 'path' )
-          .attr( 'class', 'hexagon' )
+          .classed( 'hexagon hexagon--efficiency', true )
           .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
-          .attr( 'fill', function( d ) { return colorScaleDiv( d.length ); } )
+          .attr( 'fill', function( d ) { return colorScaleDiv( d[ 0 ].fg_pct - d[ 0 ].avg_fg_pct ); } )
           .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
-
     });
 
   }
@@ -107,15 +135,6 @@
     });
 
     return leagueAverages;
-  }
-
-  function mergeEfficiency( playerShots, leagueAverages ) {
-    _.each( playerShots, function( shot, i) {
-      // Refactor
-      playerShots[i].fg_pct = _.findWhere( leagueAverages, { SHOT_ZONE_AREA: shot.zone } ).FG_PCT;
-    })
-
-    return playerShots;
   }
 
 })();
