@@ -93,7 +93,11 @@
   bottom: -9px;
 }
 
-
+.hexagon {
+	&:hover {
+		stroke: black;
+	}
+}
 
 .hexagon--efficiency {
 	stroke: $colorGrayLight;

@@ -9,6 +9,8 @@
     'leagueAverages2010': []
   }
 
+  let toPercent = d3.format( '.0%' );
+
   let margin = { top: 10, right: 10, bottom: 55, left: 10 },
   width = 466 - margin.left - margin.right,
   height = 310 - margin.top - margin.bottom;
@@ -33,13 +35,6 @@
   let colorScaleDiv = d3.scale.quantize()
     .domain( [ -0.1, 0.1 ] )
     .range( ['rgb( 253,174,97)','rgb(254,224,144)','rgb(255,255,191)','rgb(224,243,248)','rgb(171,217,233)'] );
-
-    var dom = colorScaleDiv.domain(),
-        l = (dom[1] - dom[0])/colorScaleDiv.range().length,
-        breaks = d3.range(0, colorScaleDiv.range().length).map(function(i) { return i * l; });
-
-    console.log( dom, l, breaks);
-    // debugger;
 
   let hexbin = d3.hexbin()
     .x( function( d ) { return xScale( d.LOC_X ); } )
@@ -106,7 +101,9 @@
           .attr( 'class', 'hexagon' )
           .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
           .attr( 'fill', function( d ) { return colorScaleSeq( d.length ); } )
-          .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
+          .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } )
+        .append( 'title' )
+          .text( function(d, i) { return d.length + ' shots attempted'; } );
 
       let svgE = d3.select( '#js--viz__wrap--efficiency--' + season )
         .append( 'svg' )
@@ -122,7 +119,9 @@
           .classed( 'hexagon hexagon--efficiency', true )
           .attr( 'd', function( d ) { return hexbin.hexagon( rScale( d.length ) ); } )
           .attr( 'fill', function( d ) { return colorScaleDiv( d[ 0 ].fg_pct - d[ 0 ].avg_fg_pct ); } )
-          .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } );
+          .attr( 'transform', function( d ) { return 'translate( ' + d.x + ',' + d.y + ' )'; } )
+        .append( 'title' )
+          .text( function(d, i) { return toPercent( d[0].fg_pct ) + ' made vs. ' + toPercent( d[0].avg_fg_pct ) + ' league average'; } );
     });
 
   }
