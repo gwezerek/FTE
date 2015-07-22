@@ -20,16 +20,6 @@
 }
 
 .graphic__wrap {
-	background: url(/images/court-lines.gif) no-repeat -5px 50px;
+	background: url(/images/court-lines.gif) no-repeat 10px 10px;
+	display: inline-block;
 }
-
-.hexagon {
-  // fill: steelblue;
-  // stroke: $colorGrayLighter;
-  stroke-width: .5px;
-}
-
-.clip-svg {
-  clip-path: url('../#myClip');
-}
-
