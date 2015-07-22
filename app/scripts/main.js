@@ -2,41 +2,41 @@
   'use strict';
 
   // State vars, icky, but will do for now
-  let mungedData = {
+  var mungedData = {
     '2009': [],
     '2010': [],
     'leagueAverages2009': [],
     'leagueAverages2010': []
-  }
+  };
 
-  let toPercent = d3.format( '.0%' );
+  var toPercent = d3.format( '.0%' );
 
-  let margin = { top: 10, right: 10, bottom: 55, left: 10 },
+  var margin = { top: 10, right: 10, bottom: 55, left: 10 },
   width = 466 - margin.left - margin.right,
   height = 310 - margin.top - margin.bottom;
 
-  let xScale = d3.scale.linear()
+  var xScale = d3.scale.linear()
     .domain( [ -260, 260 ] )
     .range( [ width, 0 ] );
 
-  let yScale = d3.scale.linear()
+  var yScale = d3.scale.linear()
     .domain([ 0, 295 ])
     .range( [ height, 0 ] );
 
-  let rScale = d3.scale.sqrt()
+  var rScale = d3.scale.sqrt()
     .clamp( true )
     .domain( [ 0, 6 ] )
     .range( [ 0, 6 ] );
 
-  let colorScaleSeq = d3.scale.quantize()
+  var colorScaleSeq = d3.scale.quantize()
     .domain( [ 0, 10 ] )
     .range( ['rgb(255,247,251)','rgb(236,226,240)','rgb(208,209,230)','rgb(166,189,219)','rgb(103,169,207)','rgb(54,144,192)','rgb(2,129,138)','rgb(1,108,89)','rgb(1,70,54)'] );
 
-  let colorScaleDiv = d3.scale.quantize()
+  var colorScaleDiv = d3.scale.quantize()
     .domain( [ -0.1, 0.1 ] )
     .range( ['rgb( 253,174,97)','rgb(254,224,144)','rgb(255,255,191)','rgb(224,243,248)','rgb(171,217,233)'] );
 
-  let hexbin = d3.hexbin()
+  var hexbin = d3.hexbin()
     .x( function( d ) { return xScale( d.LOC_X ); } )
     .y( function( d ) { return yScale( d.LOC_Y ); } )
     .size( [ width, height ] )
@@ -48,8 +48,8 @@
     .await( initViz );
 
   function initViz( err, data2009, data2010 ) {
-    mungedData['leagueAverages2009'] = mungeLeagueAverages( data2009 );
-    mungedData['leagueAverages2010'] = mungeLeagueAverages( data2010 );
+    mungedData.leagueAverages2009 = mungeLeagueAverages( data2009 );
+    mungedData.leagueAverages2010 = mungeLeagueAverages( data2010 );
     mungedData['2009'] = mungePlayerShots( data2009, '2009' );
     mungedData['2010'] = mungePlayerShots( data2010, '2010' );
 
@@ -57,7 +57,7 @@
   }
 
   function mungePlayerShots( data, year ) {
-    let playerShots = [];
+    var playerShots = [];
 
     // Merge header array with rows
     _.each( data.resultSets[0].rowSet, function( shot, i ) {
@@ -68,13 +68,13 @@
       }).FG_PCT;
     });
 
-    let playerFgPcts = d3.nest()
+    var playerFgPcts = d3.nest()
       .key( function( d ) { return d.SHOT_ZONE_BASIC; })
       .key( function( d ) { return d.SHOT_ZONE_AREA; })
       .rollup( function( shots ) {
         return { 'fg_pct': d3.sum( shots, function( d ) {
           return d.SHOT_MADE_FLAG;
-        }) /  shots.length }
+        }) /  shots.length };
       })
       .map( playerShots );
 
@@ -87,12 +87,12 @@
 
   function drawViz() {
     _.each( _.keys( mungedData ), function( season, i ) {
-      let svg = d3.select( '#js--viz__wrap--' + season )
+      var svg = d3.select( '#js--viz__wrap--' + season )
         .append( 'svg' )
         .attr( 'width', width + margin.left + margin.right)
         .attr( 'height', height + margin.top + margin.bottom);
 
-      let g = svg.append( 'g' )
+      var g = svg.append( 'g' )
         .attr( 'transform', 'translate( ' + margin.left + ',' + margin.top + ' )' );
 
       g.selectAll( '.hexagon' )
@@ -105,12 +105,12 @@
         .append( 'title' )
           .text( function(d, i) { return d.length + ' shots attempted'; } );
 
-      let svgE = d3.select( '#js--viz__wrap--efficiency--' + season )
+      var svgE = d3.select( '#js--viz__wrap--efficiency--' + season )
         .append( 'svg' )
         .attr( 'width', width + margin.left + margin.right)
         .attr( 'height', height + margin.top + margin.bottom);
 
-      let gE = svgE.append( 'g' )
+      var gE = svgE.append( 'g' )
         .attr( 'transform', 'translate( ' + margin.left + ',' + margin.top + ' )' );
 
       gE.selectAll( '.hexagon' )
@@ -127,7 +127,7 @@
   }
 
   function mungeLeagueAverages( data ) {
-    let leagueAverages = [];
+    var leagueAverages = [];
 
     _.each( data.resultSets[1].rowSet, function( average, i ) {
       leagueAverages.push(_.object(data.resultSets[1].headers, average));

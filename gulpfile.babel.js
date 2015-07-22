@@ -36,6 +36,8 @@ import pkg from './package.json';
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
+var gutil = require('gulp-util');
+
 // Lint JavaScript
 gulp.task('jshint', () => {
   return gulp.src('app/scripts/**/*.js')
@@ -117,7 +119,13 @@ gulp.task('styles', () => {
 
 // Concatenate and minify JavaScript
 gulp.task('scripts', () => {
-  return gulp.src(['./app/scripts/vendor/*.js', './app/scripts/main.js'])
+  return gulp.src([
+    './app/scripts/vendor/d3.js',
+    './app/scripts/vendor/queue.js',
+    './app/scripts/vendor/hexbin.js',
+    './app/scripts/vendor/underscore.js',
+    './app/scripts/main.js',
+    ])
     .pipe($.concat('main.min.js'))
     .pipe($.uglify({preserveComments: 'some'}))
     // Output files
@@ -199,7 +207,6 @@ gulp.task('default', ['clean'], cb => {
   runSequence(
     'styles',
     ['html', 'scripts', 'images', 'fonts', 'data', 'copy'],
-    'generate-service-worker',
     cb
   );
 });
